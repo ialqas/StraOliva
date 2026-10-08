@@ -17,6 +17,8 @@ services:
       - MAX_HR=${MAX_HR:-0}
       # Wind page cities, "Name:lat:lng" comma-separated (empty = per-segment wind)
       - WIND_CITIES=${WIND_CITIES:-}
+      # Heatmap start position "lat:lng" (empty = area with the most activities)
+      - HEATMAP_CENTER=${HEATMAP_CENTER:-}
       # Browser origin(s) allowed to call the API. Set to your dashboard URL
       # (e.g. http://192.168.1.50:3000) or "*" on a trusted LAN.
       - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000,http://localhost:3001}

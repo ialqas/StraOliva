@@ -35,48 +35,54 @@ flowchart LR
 
 One backend container owns the database. It serves the REST API for the dashboard and the MCP server for Claude, and runs the sync and the analytics.
 
-## Quick start (Docker)
+## Quick start
 
-You need Docker and Python 3.12+ (Python only for the one-time Strava login).
+You need **Docker**, **Python 3.12+** and a **paid Strava subscription**. Since June 2026, Strava only gives API access to developers with a subscription, and StraOliva can't sync without one.
+
+The first setup runs through the `strava-dash` CLI on your machine, **not** through Docker. The Strava login opens a browser and waits for Strava's redirect on `localhost:8888`, which doesn't reach a container. The first import of your history needs the CLI as well. Docker comes last and handles daily use.
 
 **1. Create a Strava API app.** Go to [strava.com/settings/api](https://www.strava.com/settings/api) and set **Authorization Callback Domain** to `localhost`. Everyone uses their own app; there are no shared keys.
 
 **2. Configure.**
 
 ```bash
-git clone https://github.com/<you>/StraOliva.git && cd StraOliva
+git clone https://github.com/ialqas/StraOliva.git && cd StraOliva
 cp .env.example .env    # fill in STRAVA_CLIENT_ID and STRAVA_CLIENT_SECRET
 ```
 
-**3. Log in to Strava once.** This runs on your machine, because the login opens a browser and waits for Strava's redirect on `localhost:8888`:
+**3. Install the CLI and log in to Strava.**
 
 ```bash
 cd backend
 python -m venv .venv && source .venv/bin/activate
 pip install -e .
-DB_PATH=../data/strava.db strava-dash auth
-cd ..
+export DB_PATH=../data/strava.db
+strava-dash auth
 ```
 
-The token is stored in `data/strava.db`. Do this **before** starting the containers. Only one process should write to the database at a time.
+The token is stored in `data/strava.db`.
 
-**4. Start.**
+**4. Import your history from a Strava bulk export.** Start with this rather than the Sync button. The Strava API is rate-limited (about 100 requests per 15 minutes and 1,000 per day), and every activity with its sensor data costs several requests. A first sync through the API can't fetch a longer history, while the export contains all of it.
+
+1. On Strava, go to Settings → My Account → *Download or delete your account* → *Request your archive*. Strava emails you a ZIP, which can take a few hours.
+2. Import it and compute all analytics (still in `backend/` with the venv active):
+
+   ```bash
+   strava-dash import-bulk /path/to/export_12345.zip
+   strava-dash recompute --full
+   strava-dash sync-segments    # optional: your starred segments, for the wind page
+   ```
+
+**5. Start the dashboard.**
 
 ```bash
+cd ..
 docker compose up -d --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). From now on, the **Sync** button fetches new activities. Only a few come in at a time, which the rate limit handles easily.
 
-**5. Load your history.** Pick one:
-
-- **Sync button** in the dashboard. Fetches your activities through the API. Strava's rate limits (about 200 requests per 15 min) make a long history slow.
-- **Bulk import** (faster for years of data). Request your archive under Strava → Settings → My Account → *Download or delete your account*, put the ZIP into `data/`, then:
-
-  ```bash
-  docker compose exec backend strava-dash import-bulk /data/export_12345.zip
-  docker compose exec backend strava-dash recompute --full
-  ```
+Finish steps 3 and 4 **before** starting the containers, and stop them (`docker compose down`) whenever you use the CLI on your machine again. Only one process should write to the database at a time. Two writers can corrupt it.
 
 ## Configuration
 
@@ -90,6 +96,7 @@ All settings live in `.env`. See [.env.example](.env.example) for the full list 
 | `MAX_HR` | auto | Max heart rate. Auto: highest HR held ≥ 10 s in the last 12 months. Drives all HR zones |
 | `REST_HR` | 40 | Resting heart rate, used for HR-based TSS |
 | `WIND_CITIES` | empty | Cities for the wind page, e.g. `Munich:48.14:11.58,Berlin:52.52:13.40`. Empty = wind at each segment |
+| `HEATMAP_CENTER` | empty | Heatmap start position as `lat:lng`, e.g. `48.14:11.58`. Empty = the area with the most activities |
 | `NEXT_PUBLIC_API_URL` | `http://localhost:8000` | Where the browser reaches the backend. Baked in at build time, so rebuild after changing it |
 | `CORS_ORIGINS` | `http://localhost:3000` | Origins allowed to call the API |
 | `MCP_HTTP_ENABLED` | 1 | Serve the MCP server at `/mcp` |
@@ -101,7 +108,7 @@ Values you set are used as-is. Leave them empty to auto-detect them. The dashboa
 
 The **Sync** button fetches new activities from Strava and recomputes the analytics (TSS, fitness, FTP, power curve, heatmap) for them.
 
-Command-line tools, run inside the container:
+Once the containers are running, run CLI commands inside the backend container so it stays the only process writing to the database:
 
 ```bash
 docker compose exec backend strava-dash <command>

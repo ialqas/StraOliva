@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     # e.g. "Munich:48.14:11.58,Berlin:52.52:13.40". Empty = wind per segment location.
     wind_cities: str = ""
 
+    # Heatmap start position, "lat:lng" (e.g. "48.14:11.58"). Empty = center of
+    # the area with the most activities.
+    heatmap_center: str = ""
+
     # env_ignore_empty: `FTP_W=` in .env means "not set" instead of failing to parse
     model_config = {"env_file": str(_ENV_FILE), "env_file_encoding": "utf-8", "env_ignore_empty": True}
 

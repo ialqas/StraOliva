@@ -97,9 +97,20 @@ def _public(data: dict) -> dict:
     return public
 
 
+def _configured_center() -> list[float] | None:
+    """HEATMAP_CENTER ("lat:lng") as [lng, lat], or None if unset/malformed."""
+    try:
+        lat, lng = (float(p) for p in settings.heatmap_center.split(":"))
+    except ValueError:
+        return None
+    return [lng, lat]
+
+
 def _center(tracks: list[list[list[float]]]) -> list[float]:
-    """Center of the area with the most activities (a plain mean lands between
+    """Configured HEATMAP_CENTER, else the center of the area with the most activities (a plain mean lands between
     two training areas). Track midpoints are binned on a ~10 km grid."""
+    if (configured := _configured_center()) is not None:
+        return configured
     mids = [t[len(t) // 2] for t in tracks if t]
     if not mids:
         return [10.0, 50.0]
