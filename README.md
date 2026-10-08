@@ -6,10 +6,9 @@ StraOliva pulls your activities from Strava into a local SQLite database and tur
 
 Everything runs on your own machine. Your data never leaves it, apart from the calls to the Strava API.
 
-<!-- Screenshot: add docs/screenshots/dashboard.png and uncomment.
-     Leave maps out or blur them; they show where you train.
-![Dashboard](docs/screenshots/dashboard.png)
--->
+![StraOliva dashboard: activity calendar, form and fitness](docs/screenshots/dashboard.png)
+
+*The dashboard: a year of training coloured by load, your current form (fresh or tired) and whether your fitness is rising or falling.*
 
 ## Features
 
@@ -21,6 +20,29 @@ Everything runs on your own machine. Your data never leaves it, apart from the c
 - **Wind & segments:** live wind for your starred Strava segments, showing which ones have a tailwind today.
 - **AI coach (MCP):** Claude can read your training state, analyse workouts, predict races and build or adjust your plan.
 - **German and English**, light and dark mode, works on phones and installs as an app (PWA).
+
+## A quick tour
+
+Screenshots show the German interface; the DE / EN switch in the top bar changes the language.
+
+### Analytics
+
+![Analytics page with year-to-date totals, training load, monthly overview and race predictions](docs/screenshots/analytics.png)
+
+Year-to-date totals, the training load chart (**CTL** = fitness, **ATL** = fatigue, **TSB** = form) and race predictions from your recent runs, each with a confidence level and a range. The **All / Run / Bike** filter in the corner applies to every chart. Further down are weekly volume, time in zone, your HR and pace zones, the power curve and the aerobic trends.
+
+### Training plan and heatmap
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/training-plan.png" alt="Training plan calendar with planned workouts and completed activities"></td>
+    <td width="50%"><img src="docs/screenshots/heatmap.png" alt="Heatmap of all GPS tracks on a map"></td>
+  </tr>
+  <tr>
+    <td>Planned workouts (blue: runs, orange: rides) next to what you actually did (grey, from Strava). The AI coach can create and adjust these workouts. Click one to see its steps.</td>
+    <td>All your GPS tracks on one map. Routes you use often glow brighter.</td>
+  </tr>
+</table>
 
 ## How it works
 
