@@ -1,0 +1,50 @@
+# Environment
+.env
+*.env
+.env*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# SQLite DB (contains personal data)
+data/*.db
+data/*.db-shm
+data/*.db-wal
+# DB backups/dumps, e.g. strava.db.corrupt-backup
+data/*.db.*
+data/*.sqlite
+data/*.sqlite3
+
+# Generated caches (contain GPS tracks / personal data)
+data/*.json
+
+# Internal planning notes
+PROJECT_BRIEF.md
+MCP_BRIEF.md
+old_change_log.md
+
+# Strava bulk export
+*.zip
+
+# Next.js
+frontend/.next/
+frontend/node_modules/
+frontend/out/
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / tools
+.claude/
+.vscode/
+.idea/
+*.swp

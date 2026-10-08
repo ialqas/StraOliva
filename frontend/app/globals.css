@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --strava: #FC4C02;
+  --strava-dark: #E04400;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* iOS Safari zooms into form fields with font-size < 16px — prevent that on phones */
+@media (max-width: 767px) {
+  select, input, textarea { font-size: 16px !important; }
+}
+
+body {
+  background: #fff;
+  color: #1a1a1a;
+  font-family: Inter, system-ui, sans-serif;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.dark body,
+html.dark {
+  background: #111827;
+  color: #F9FAFB;
+}
+
+/* Recharts tooltip */
+.recharts-tooltip-wrapper { z-index: 50; }
+
+/* Dark scrollbar */
+.dark ::-webkit-scrollbar { width: 6px; height: 6px; }
+.dark ::-webkit-scrollbar-track { background: #1F2937; }
+.dark ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 3px; }
